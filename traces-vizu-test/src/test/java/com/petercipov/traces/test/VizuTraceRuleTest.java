@@ -5,7 +5,6 @@ import com.petercipov.traces.api.Trace;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import org.junit.After;
 import org.junit.Test;
@@ -41,42 +40,62 @@ public class VizuTraceRuleTest {
 
 	@Test
 	public void exampleTraceOutput() throws Exception {
-		
+		String USER_ID = "userId";
 		Trace trace = traceRule.trace();
 		
-		trace.event("tracing demo");
-		
-		Future<String> f1 = callRestService(trace, 1, "{\"data\": \"remove\"}", false);
-		Future<String> f2 = callRestService(trace, 2, "{\"data\": \"remove\"}", true);
-		Future<String> f3 = callRestService(trace, 3, "{\"data\": \"remove\"}", false);
-		
-		f1.get();
-		f2.get();
-		f3.get();
+		checkACL(trace, "userId");
+		purgeUserHistory(trace, USER_ID);
+		respondOK(trace);
 		
 	}
+
+	private void purgeUserHistory(Trace trace, String userId) throws Exception {
+		Event purgingEvent = trace.start("Purging user history (userId)", userId);
+		
+		try {
+			callRestService(trace, 1, "{\"data\": \"remove\"}", true);
+		} catch (Exception ex) {
+			trace.event("retrying purge call");
+			callRestService(trace, 1, "{\"data\": \"remove\"}", false);
+		}
+		
+		trace.end(purgingEvent);
+	}
 	
-	private Future<String> callRestService(final Trace trace, final int id, final String data, final boolean fail) {
+	private void checkACL(Trace trace, String userId) {
+		trace.event("User has sufficient privileges (userid)", userId);
+	} 
+	
+	private void respondOK(Trace trace) {
+		trace.event("Responding OK ");
+	}
+	
+	private String callRestService(final Trace trace, final int id, final String data, final boolean fail) throws Exception {
 		return es.submit(new Callable<String>() {
 
 			@Override
 			public String call() {
 				Event callEvent = trace.start("calling remote service (id, data)", id, data);
-				
 				String code;
-				if (fail) {
-					code = "500";
-					trace.event("call failed", new IllegalStateException("remote service responded with HTTP 500"));
-				} else {
-					code = "200";
-					trace.event("call succeeded (response)", code);
-				}
 				
-				trace.end(callEvent);
+				try {
+					if (fail) {
+						code = "500";
+						throw new IllegalStateException("remote service responded with HTTP 500"); 
+					} else {
+						code = "200";
+					}
+					trace.event("call succeeded (response)", code);
+				} catch(RuntimeException ex ) {
+					trace.event("call failed", ex);
+					throw ex;
+				} finally {
+					trace.end(callEvent);
+				}
 				
 				return code;
 			}
-		});
+		}).get();
 	}
 	
 }
