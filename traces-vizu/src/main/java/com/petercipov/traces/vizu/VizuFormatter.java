@@ -25,10 +25,10 @@ public final class VizuFormatter {
 	}
 	
 	public static void format(Collection<Event> events, Writer w) throws IOException {
-		JsonGenerator jg = new JsonFactory().createGenerator(w);
+		JsonGenerator jg = new JsonFactory().createGenerator(w).configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
 		List<Event> finishedEvents = constructFinished(events);
 		
-		w.append(DELIMITER);
+		jg.writeRaw(DELIMITER);
 		
 		jg.writeStartObject();
 		jg.writeArrayFieldStart("trace");
@@ -43,21 +43,19 @@ public final class VizuFormatter {
 				serializeEvent(e, jg, finishedEvents.contains(e));
 			}
 			
-			jg.flush();
-			w.append("\n\t");
+			jg.writeRaw("\n\t");
 		}
 
 		jg.writeEndArray();
-		jg.flush();
-		w.append("\n ");
+		jg.writeRaw("\n ");
 		jg.writeEndObject();
-		jg.flush();
-		w.append(DELIMITER);
+		jg.writeRaw(DELIMITER);
+		jg.close();
 	}
 	
 	private static void serializeEvent(Event event, JsonGenerator jg, boolean finished) throws IOException{
 		jg.writeStartObject();
-			jg.writeStringField("thread", event.getThreadName());
+			jg.writeStringField("th", event.getThreadName());
 			jg.writeStringField("t", serializeTime(event.getTime()));			
 			jg.writeNumberField("id", event.getId());
 			jg.writeStringField("n",  event.getName());
@@ -71,7 +69,7 @@ public final class VizuFormatter {
 	
 	private static void serializeEnd(End end, JsonGenerator jg) throws IOException {
 		jg.writeStartObject();
-			jg.writeStringField("thread", end.getThreadName());
+			jg.writeStringField("th", end.getThreadName());
 			jg.writeStringField("t", serializeTime(end.getTime()));
 			jg.writeNumberField("id", end.getId());
 			jg.writeNumberField("endOf",  end.getStartEvent().getId());
@@ -82,7 +80,7 @@ public final class VizuFormatter {
 	private static void serializeSimple(SimpleEvent event, JsonGenerator jg) throws IOException{
 		
 		jg.writeStartObject();
-		jg.writeStringField("thread", event.getThreadName());
+		jg.writeStringField("th", event.getThreadName());
 		jg.writeStringField("t", serializeTime(event.getTime()));
 		jg.writeNumberField("id", event.getId());
 		jg.writeStringField("n",  event.getName());
@@ -94,7 +92,7 @@ public final class VizuFormatter {
 	}
 
 	private static List<Event> constructFinished(Collection<Event> events) {
-		ArrayList<Event> finished = new ArrayList<>(0);
+		ArrayList<Event> finished = new ArrayList<Event>(0);
 		
 		for (Event e : events) {
 			if (e instanceof End) {
@@ -129,7 +127,9 @@ public final class VizuFormatter {
 
 		jg.writeStringField("errorMessage", th.toString());
 		jg.writeArrayFieldStart("stack");
+		jg.writeRaw("\t\t");
 			for (StackTraceElement element : th.getStackTrace()) {
+				jg.writeRaw("\n\t\t");
 				writeStatckElement(jg, element);
 			}
 		jg.writeEndArray();

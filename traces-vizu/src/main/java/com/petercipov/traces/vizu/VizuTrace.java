@@ -17,7 +17,7 @@ public class VizuTrace implements Trace {
 	private final ConcurrentLinkedQueue<Event> trace;
 
 	public VizuTrace() {
-		this.trace = new ConcurrentLinkedQueue<>();
+		this.trace = new ConcurrentLinkedQueue<Event>();
 	}
 	
 	@Override
