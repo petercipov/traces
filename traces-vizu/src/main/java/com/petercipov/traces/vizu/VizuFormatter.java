@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Date;
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -17,6 +17,14 @@ import java.text.DateFormat;
  */
 public final class VizuFormatter {
 	
+	private static final ThreadLocal<SimpleDateFormat> tl = new ThreadLocal<SimpleDateFormat>() {
+
+		@Override
+		protected SimpleDateFormat initialValue() {
+			return new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.SSS'Z'");
+		}
+		
+	};
 	
 	private static final String DELIMITER = "\n###>>>\n"; 
 
@@ -59,7 +67,6 @@ public final class VizuFormatter {
 			jg.writeStringField("t", serializeTime(event.getTime()));			
 			jg.writeNumberField("id", event.getId());
 			jg.writeStringField("n",  event.getName());
-			jg.writeStringField("type", "start");
 			jg.writeBooleanField("finished", finished);
 			jg.writeArrayFieldStart("values");
 				addToArray(jg, event.getValues());
@@ -73,7 +80,6 @@ public final class VizuFormatter {
 			jg.writeStringField("t", serializeTime(end.getTime()));
 			jg.writeNumberField("id", end.getId());
 			jg.writeNumberField("endOf",  end.getStartEvent().getId());
-			jg.writeStringField("type", "end");
 		jg.writeEndObject();
 	}
 	
@@ -84,7 +90,6 @@ public final class VizuFormatter {
 		jg.writeStringField("t", serializeTime(event.getTime()));
 		jg.writeNumberField("id", event.getId());
 		jg.writeStringField("n",  event.getName());
-		jg.writeStringField("type", "event");
 			jg.writeArrayFieldStart("values");
 			addToArray(jg, event.getValues());
 			jg.writeEndArray();		
@@ -151,6 +156,6 @@ public final class VizuFormatter {
 	}
 	
 	private static String serializeTime(Date date) {
-		return DateFormat.getDateInstance().format(date);
+		return tl.get().format(date);
 	}
 }

@@ -2,7 +2,6 @@ package com.petercipov.traces.test;
 
 import com.petercipov.traces.api.Event;
 import com.petercipov.traces.api.Trace;
-import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,7 +9,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import org.junit.After;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Rule;
 
