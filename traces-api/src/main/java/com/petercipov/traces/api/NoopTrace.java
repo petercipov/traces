@@ -13,10 +13,11 @@ public final class NoopTrace implements Trace {
 
 		@Override
 		public void end() {
+			//NOOP
 		}
 	};
 
-	NoopTrace() {}
+	private NoopTrace() {}
 	
 	@Override
 	public Event start(String name, Object... values) {

@@ -7,6 +7,7 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  *
@@ -18,7 +19,7 @@ final class VizuFormatter {
 
 		@Override
 		protected SimpleDateFormat initialValue() {
-			return new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.SSS'Z'");
+			return new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
 		}
 		
 	};
