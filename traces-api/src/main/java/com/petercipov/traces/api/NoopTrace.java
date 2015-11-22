@@ -7,18 +7,20 @@ package com.petercipov.traces.api;
  */
 public final class NoopTrace implements Trace {
 	
-	private static final Event EVENT = new Event(1, "NOOP", new Object[0]);
+	public static final NoopTrace INSTANCE = new NoopTrace();
+
+	private static final Event EVENT = new Event() {
+
+		@Override
+		public void end() {
+		}
+	};
 
 	NoopTrace() {}
 	
 	@Override
 	public Event start(String name, Object... values) {
 		return EVENT;
-	}
-
-	@Override
-	public void end(Event event) {
-		//NOOP
 	}
 
 	@Override

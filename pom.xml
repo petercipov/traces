@@ -32,6 +32,6 @@
 	<modules>
 		<module>traces-api</module>
 		<module>traces-vizu</module>
-		<module>traces-vizu-test</module>
+		<module>traces-junit</module>
 	</modules>
 </project>

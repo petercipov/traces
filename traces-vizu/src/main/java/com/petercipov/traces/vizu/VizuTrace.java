@@ -1,6 +1,5 @@
 package com.petercipov.traces.vizu;
 
-import com.petercipov.traces.api.Event;
 import com.petercipov.traces.api.Trace;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -14,51 +13,57 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class VizuTrace implements Trace {
 	
 	private static final Object[] EMPTY = new Object[0];
-	private final ConcurrentLinkedQueue<Event> trace;
+	private final ConcurrentLinkedQueue<SerializedEvent> trace;
 
 	public VizuTrace() {
-		this.trace = new ConcurrentLinkedQueue<Event>();
+		this.trace = new ConcurrentLinkedQueue<SerializedEvent>();
 	}
 	
 	@Override
 	public Event start(String name) {
-		return createEvent(name, EMPTY);
+		return createEndEvent(name, EMPTY);
 	}
 
 	@Override
 	public Event start(String name, Object v1) {
-		return createEvent(name, new Object[] {v1});
+		return createEndEvent(name, new Object[] {v1});
 	}
 
 	@Override
 	public Event start(String name, Object v1, Object v2) {
-		return createEvent(name, new Object[] {v1, v2});
+		return createEndEvent(name, new Object[] {v1, v2});
 	}
 
 	@Override
 	public Event start(String name, Object v1, Object v2, Object v3) {
-		return createEvent(name, new Object[] {v1, v2, v3});
+		return createEndEvent(name, new Object[] {v1, v2, v3});
 	}
 
 	@Override
 	public Event start(String name, Object v1, Object v2, Object v3, Object v4) {
-		return createEvent(name, new Object[] {v1, v2, v3, v4});
+		return createEndEvent(name, new Object[] {v1, v2, v3, v4});
 	}
 	
 	@Override
 	public Event start(String name, Object v1, Object v2, Object v3, Object v4, Object v5) {
-		return createEvent(name, new Object[] {v1, v2, v3, v4, v5});
+		return createEndEvent(name, new Object[] {v1, v2, v3, v4, v5});
 	}
 	
 	@Override
 	public Event start(String name, Object... values) {
-		return createEvent(name, values);
+		return createEndEvent(name, values);
 	}
 
-	private Event createEvent(String name, Object [] values) {
-		Event event = new Event(trace.size(), name, values);
-		trace.add(event);
-		return event;
+	private Event createEndEvent(String name, Object [] values) {
+		final SimpleEvent simple = simple(name, values);
+		
+		return new Trace.Event() {
+			
+			@Override
+			public void end() {
+				trace.add(new EndEvent(simple, System.currentTimeMillis(), Thread.currentThread().getName()));
+			}
+		};
 	}
 
 		@Override
@@ -96,14 +101,10 @@ public class VizuTrace implements Trace {
 		simple(name, values);
 	}
 
-	private void simple(String name, Object[] values) {
-		trace.add(new SimpleEvent(trace.size(), name, values));
-	}
-	
-	
-	@Override
-	public void end(Event event) {
-		trace.add(new End(trace.size(),event));
+	private SimpleEvent simple(String name, Object[] values) {
+		SimpleEvent event = new SimpleEvent(name, values, Thread.currentThread().getName(), System.currentTimeMillis());
+		trace.add(event);
+		return event;
 	}
 
 	@Override

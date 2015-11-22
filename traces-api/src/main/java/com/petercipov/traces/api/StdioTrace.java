@@ -1,6 +1,5 @@
 package com.petercipov.traces.api;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -48,15 +47,17 @@ public class StdioTrace implements Trace {
 
 	@Override
 	public Event start(String name, Object... values) {
-		Event event = new Event(counter.incrementAndGet(), name, values);
-		System.out.format("guid:%d id:%d thread:%s t:%s \t type:start n:%s values:%s \n", localGuid, event.getId(), event.getThreadName(), event.getTime().toString(), event.getName(), Arrays.toString(event.getValues()));
-		return event;
-	}
-
-	@Override
-	public void end(Event event) {
-		System.out.format("guid:%d id:%d thread:%s t:%s \t type:end of:%d \n", localGuid,  counter.incrementAndGet(), event.getThreadName(), event.getTime().toString(), event.getId());
+		int id = counter.incrementAndGet();
 		
+		System.out.format("guid:%d | id:%d | thread:%s | t:%d | \t type:start | n:%s | values:%s \n", 
+			localGuid, 
+			id,
+			Thread.currentThread().getName(), 
+			System.currentTimeMillis(), 
+			name, 
+			Arrays.toString(values));
+		
+		return new StdioEvent(localGuid, id, counter);
 	}
 
 	@Override
@@ -91,7 +92,13 @@ public class StdioTrace implements Trace {
 
 	@Override
 	public void event(String name, Object... values) {
-		System.out.format("guid:%d id:%d thread:%s t:%s \t n:%s values:%s \n", localGuid, counter.incrementAndGet(), Thread.currentThread().getName(), LocalDateTime.now().toString(), name, Arrays.toString(values));
+		System.out.format("guid:%d | id:%d | thread:%s | t:%d | \t n:%s | values:%s \n", 
+			localGuid, 
+			counter.incrementAndGet(), 
+			Thread.currentThread().getName(), 
+			System.currentTimeMillis(), 
+			name, 
+			Arrays.toString(values));
 	}
 	
 }

@@ -1,7 +1,7 @@
 package com.petercipov.traces.test;
 
-import com.petercipov.traces.api.Event;
 import com.petercipov.traces.api.Trace;
+import com.petercipov.traces.api.Trace.Event;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,7 +18,7 @@ import org.junit.Rule;
 public class VizuTraceRuleTest {
 	
 	@Rule
-	public VizuTraceRule traceRule = new VizuTraceRule();
+	public TraceRule traceRule = new TraceRule();
 	
 	private ExecutorService es;
 	
@@ -43,7 +43,7 @@ public class VizuTraceRuleTest {
 		String USER_ID = "userId";
 		Trace trace = traceRule.trace();
 		
-		checkACL(trace, "userId");
+		checkACL(trace, USER_ID);
 		purgeUserHistory(trace, USER_ID);
 		respondOK(trace);
 		
@@ -59,7 +59,7 @@ public class VizuTraceRuleTest {
 			callRestService(trace, 1, "{\"data\": \"remove\"}", false);
 		}
 		
-		trace.end(purgingEvent);
+		purgingEvent.end();
 	}
 	
 	private void checkACL(Trace trace, String userId) {
@@ -90,7 +90,7 @@ public class VizuTraceRuleTest {
 					trace.event("call failed", ex);
 					throw ex;
 				} finally {
-					trace.end(callEvent);
+					callEvent.end();
 				}
 				
 				return code;
