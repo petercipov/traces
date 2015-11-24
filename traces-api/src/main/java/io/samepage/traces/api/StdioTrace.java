@@ -1,4 +1,4 @@
-package com.petercipov.traces.api;
+package io.samepage.traces.api;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;

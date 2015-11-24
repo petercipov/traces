@@ -1,7 +1,7 @@
-package com.petercipov.traces.test;
+package io.samepage.traces.test;
 
-import com.petercipov.traces.api.Trace;
-import com.petercipov.traces.api.Trace.Event;
+import io.samepage.traces.api.Trace;
+import io.samepage.traces.api.Trace.Event;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

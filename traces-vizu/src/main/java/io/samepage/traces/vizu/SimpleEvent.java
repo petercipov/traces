@@ -1,4 +1,4 @@
-package com.petercipov.traces.vizu;
+package io.samepage.traces.vizu;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import java.io.IOException;

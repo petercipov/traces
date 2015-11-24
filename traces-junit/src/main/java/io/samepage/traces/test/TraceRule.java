@@ -1,10 +1,10 @@
-package com.petercipov.traces.test;
+package io.samepage.traces.test;
 
-import com.petercipov.traces.api.NoopTraceFactory;
-import com.petercipov.traces.api.StdioTraceFactory;
-import com.petercipov.traces.api.Trace;
-import com.petercipov.traces.api.TraceFactory;
-import com.petercipov.traces.vizu.VizuTraceFactory;
+import io.samepage.traces.api.NoopTraceFactory;
+import io.samepage.traces.api.StdioTraceFactory;
+import io.samepage.traces.api.Trace;
+import io.samepage.traces.api.TraceFactory;
+import io.samepage.traces.vizu.VizuTraceFactory;
 import java.util.LinkedList;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
