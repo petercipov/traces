@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/petercipov/traces.svg?branch=master)](https://travis-ci.org/petercipov/traces)
 ![Traces (doc/traces.png)](https://raw.githubusercontent.com/petercipov/traces/master/doc/traces.png)
 
 Traces is a code flow tracing library.
