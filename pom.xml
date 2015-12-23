@@ -9,7 +9,7 @@
 	
 	<name>traces-parent</name>
 	<description>Code flow tracing libray</description>
-	<url>http://petercipov.com/traces</url>
+	<url>http://www.petercipov.com/traces-sane-logging-in-async</url>
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

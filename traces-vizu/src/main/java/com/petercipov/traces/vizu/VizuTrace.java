@@ -1,6 +1,6 @@
-package io.samepage.traces.vizu;
+package com.petercipov.traces.vizu;
 
-import io.samepage.traces.api.Trace;
+import com.petercipov.traces.api.Trace;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;

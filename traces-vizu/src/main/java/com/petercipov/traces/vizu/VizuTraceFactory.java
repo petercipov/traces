@@ -1,6 +1,6 @@
-package io.samepage.traces.vizu;
+package com.petercipov.traces.vizu;
 
-import io.samepage.traces.api.TraceFactory;
+import com.petercipov.traces.api.TraceFactory;
 
 
 /**

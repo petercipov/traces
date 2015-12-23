@@ -1,4 +1,4 @@
-package io.samepage.traces.vizu;
+package com.petercipov.traces.vizu;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;

@@ -1,4 +1,4 @@
-package io.samepage.traces.api;
+package com.petercipov.traces.api;
 
 
 /**
