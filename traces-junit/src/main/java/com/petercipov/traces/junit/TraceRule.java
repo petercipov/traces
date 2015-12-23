@@ -4,7 +4,9 @@ import com.petercipov.traces.api.NoopTraceFactory;
 import com.petercipov.traces.api.StdioTraceFactory;
 import com.petercipov.traces.api.Trace;
 import com.petercipov.traces.api.TraceFactory;
+import com.petercipov.traces.vizu.VizuTrace;
 import com.petercipov.traces.vizu.VizuTraceFactory;
+import java.io.StringWriter;
 import java.util.LinkedList;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
@@ -72,8 +74,18 @@ public class TraceRule extends ExternalResource implements TraceFactory<Trace> {
 	protected void after() {
 		if (type == Type.VIZU) {
 			for(Trace trace : traces) {
-				logger.info(trace.toString());
+				try {
+					logTrace(trace);
+				} catch(Exception ex) {
+					logger.error("Could not properly log trace due to error", ex);
+				}
 			}
 		}
+	}
+
+	private void logTrace(Trace trace) throws Exception {
+		StringWriter sw = new StringWriter();
+		((VizuTrace) trace).write(sw);
+		logger.info(sw.toString());
 	}
 }

@@ -10,95 +10,102 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class StdioTrace implements Trace {
 	
-	private static final AtomicLong uuid = new AtomicLong();
+	private static final AtomicLong LOCAL_COUNTER = new AtomicLong();
 	private final AtomicInteger counter = new AtomicInteger();
+	private final Level expectedLevel;
+	private final long localGuid = LOCAL_COUNTER.incrementAndGet();
+
+	public StdioTrace(Level expectedLevel) {
+		this.expectedLevel = expectedLevel;
+	}
 	
-	private final long localGuid = uuid.incrementAndGet();
-
-	@Override
+		@Override
 	public Event start(String name) {
-		return start(name, new Object[] {});
-	}
-
-	@Override
-	public Event start(String name, Object v1) {
-		return start(name, new Object[] {v1});
-	}
-
-	@Override
-	public Event start(String name, Object v1, Object v2) {
-		return start(name, new Object[] {v1, v2});
-	}
-
-	@Override
-	public Event start(String name, Object v1, Object v2, Object v3) {
-		return start(name, new Object[] {v1, v2, v3});
-	}
-
-	@Override
-	public Event start(String name, Object v1, Object v2, Object v3, Object v4) {
-		return start(name, new Object[] {v1, v2, v3, v4});
-	}
-
-	@Override
-	public Event start(String name, Object v1, Object v2, Object v3, Object v4, Object v5) {
-		return start(name, new Object[] {v1, v2, v3, v4, v5});
+		return start(Level.INFO, name);
 	}
 
 	@Override
 	public Event start(String name, Object... values) {
+		return start(Level.INFO, name, values);
+	}
+
+	@Override
+	public Event start(Level level, String name) {
+		if (! expectedLevel.enables(level)) { return NoopTrace.EVENT; }
+		
 		int id = counter.incrementAndGet();
-		
-		System.out.format("guid:%d | id:%d | thread:%s | t:%d | \t type:start | n:%s | values:%s \n", 
-			localGuid, 
-			id,
-			Thread.currentThread().getName(), 
-			System.currentTimeMillis(), 
-			name, 
-			Arrays.toString(values));
-		
+		printStart(id, name, "");
 		return new StdioEvent(localGuid, id, counter);
 	}
 
 	@Override
+	public Event start(Level level, String name, Object... values) {
+		if (! expectedLevel.enables(level)) { return NoopTrace.EVENT; }
+		
+		int id = counter.incrementAndGet();
+		printStart(id, name, Arrays.toString(values));
+		return new StdioEvent(localGuid, id, counter);
+	}
+
+	private void printStart(int id, String name, String valuesString) {
+		System.out.format("guid:%d | id:%d | thread:%s | t:%d | \t type:start | n:%s | values:%s \n",
+			localGuid,
+			id,
+			Thread.currentThread().getName(),
+			System.currentTimeMillis(),
+			name,
+			valuesString);
+	}
+
+	@Override
+	public void event(Level level, String name) {
+		if (! expectedLevel.enables(level)) { return; }
+		printEvent(name, "");
+	}
+
+	@Override
+	public void event(Level level, String name, Object... values) {
+		if (! expectedLevel.enables(level)) { return; }
+		printEvent(name, Arrays.toString(values));
+	}
+
+	private void printEvent(String name, String values) {
+		System.out.format("guid:%d | id:%d | thread:%s | t:%d | \t n:%s | values:%s \n",
+			localGuid,
+			counter.incrementAndGet(),
+			Thread.currentThread().getName(),
+			System.currentTimeMillis(),
+			name,
+			values);
+	}
+	
+	@Override
 	public void event(String name) {
-		event(name, new Object[]{});
-	}
-
-	@Override
-	public void event(String name, Object v1) {
-		event(name, new Object[]{v1});
-	}
-
-	@Override
-	public void event(String name, Object v1, Object v2) {
-		event(name, new Object[]{v1, v2});
-	}
-
-	@Override
-	public void event(String name, Object v1, Object v2, Object v3) {
-		event(name, new Object[]{v1, v2, v3});
-	}
-
-	@Override
-	public void event(String name, Object v1, Object v2, Object v3, Object v4) {
-		event(name, new Object[]{v1, v2, v3, v4});
-	}
-
-	@Override
-	public void event(String name, Object v1, Object v2, Object v3, Object v4, Object v5) {
-		event(name, new Object[]{v1, v2, v3, v4, v5});
+		event(Level.INFO, name);
 	}
 
 	@Override
 	public void event(String name, Object... values) {
-		System.out.format("guid:%d | id:%d | thread:%s | t:%d | \t n:%s | values:%s \n", 
-			localGuid, 
-			counter.incrementAndGet(), 
-			Thread.currentThread().getName(), 
-			System.currentTimeMillis(), 
-			name, 
-			Arrays.toString(values));
+		event(Level.INFO, name, values);
 	}
-	
+
+	@Override
+	public boolean isDebugEnabled() {
+		return expectedLevel.enables(Level.DEBUG);
+	}
+
+	@Override
+	public boolean isInfoEnabled() {
+		return expectedLevel.enables(Level.DEBUG);
+	}
+
+	@Override
+	public boolean isWarnEnabled() {
+		return expectedLevel.enables(Level.DEBUG);
+	}
+
+	@Override
+	public boolean isErrorEnabled() {
+		return expectedLevel.enables(Level.DEBUG);
+	}	
 }

@@ -1,5 +1,6 @@
 package com.petercipov.traces.vizu;
 
+import com.petercipov.traces.api.Level;
 import com.petercipov.traces.api.TraceFactory;
 
 
@@ -9,8 +10,18 @@ import com.petercipov.traces.api.TraceFactory;
  */
 public class VizuTraceFactory implements TraceFactory<VizuTrace> {
 	
+	private final Level expectedLevel;
+
+	public VizuTraceFactory() {
+		this(Level.INFO);
+	}
+
+	public VizuTraceFactory(Level expectedLevel) {
+		this.expectedLevel = expectedLevel;
+	}
+	
 	@Override
 	public VizuTrace create() {
-		return new VizuTrace();
+		return new VizuTrace(expectedLevel);
 	}
 }

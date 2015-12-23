@@ -9,7 +9,7 @@ public final class NoopTrace implements Trace {
 	
 	public static final NoopTrace INSTANCE = new NoopTrace();
 
-	private static final Event EVENT = new Event() {
+	public static final Event EVENT = new Event() {
 
 		@Override
 		public void end() {
@@ -35,57 +35,47 @@ public final class NoopTrace implements Trace {
 	}
 
 	@Override
-	public Event start(String name, Object v1) {
-		return EVENT;
-	}
-
-	@Override
-	public Event start(String name, Object v1, Object v2) {
-		return EVENT;
-	}
-
-	@Override
-	public Event start(String name, Object v1, Object v2, Object v3) {
-		return EVENT;
-	}
-
-	@Override
-	public Event start(String name, Object v1, Object v2, Object v3, Object v4) {
-		return EVENT;
-	}
-
-	@Override
-	public Event start(String name, Object v1, Object v2, Object v3, Object v4, Object v5) {
-		return EVENT;
-	}
-
-	@Override
 	public void event(String name) {
 		//NOOP
 	}
 
 	@Override
-	public void event(String name, Object v1) {
+	public boolean isDebugEnabled() {
+		return false;
+	}
+
+	@Override
+	public boolean isInfoEnabled() {
+		return false;
+	}
+
+	@Override
+	public boolean isWarnEnabled() {
+		return false;
+	}
+
+	@Override
+	public boolean isErrorEnabled() {
+		return false;
+	}
+
+	@Override
+	public Event start(Level level, String name) {
+		return EVENT;
+	}
+	
+	@Override
+	public Event start(Level level, String name, Object... values) {
+		return EVENT;
+	}
+
+	@Override
+	public void event(Level level, String name) {
 		//NOOP
 	}
 
 	@Override
-	public void event(String name, Object v1, Object v2) {
-		//NOOP
-	}
-
-	@Override
-	public void event(String name, Object v1, Object v2, Object v3) {
-		//NOOP
-	}
-
-	@Override
-	public void event(String name, Object v1, Object v2, Object v3, Object v4) {
-		//NOOP
-	}
-
-	@Override
-	public void event(String name, Object v1, Object v2, Object v3, Object v4, Object v5) {
+	public void event(Level level, String name, Object... values) {
 		//NOOP
 	}
 }

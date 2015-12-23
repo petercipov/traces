@@ -1,8 +1,9 @@
 package com.petercipov.traces.vizu;
 
+import com.petercipov.traces.api.Level;
+import com.petercipov.traces.api.NoopTrace;
 import com.petercipov.traces.api.Trace;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -14,43 +15,32 @@ public class VizuTrace implements Trace {
 	
 	private static final Object[] EMPTY = new Object[0];
 	private final ConcurrentLinkedQueue<SerializedEvent> trace;
+	private final Level expectedLevel;
 
-	public VizuTrace() {
+	public VizuTrace(Level expectedLevel) {
 		this.trace = new ConcurrentLinkedQueue<SerializedEvent>();
+		this.expectedLevel = expectedLevel;
 	}
 	
 	@Override
 	public Event start(String name) {
-		return createEndEvent(name, EMPTY);
-	}
-
-	@Override
-	public Event start(String name, Object v1) {
-		return createEndEvent(name, new Object[] {v1});
-	}
-
-	@Override
-	public Event start(String name, Object v1, Object v2) {
-		return createEndEvent(name, new Object[] {v1, v2});
-	}
-
-	@Override
-	public Event start(String name, Object v1, Object v2, Object v3) {
-		return createEndEvent(name, new Object[] {v1, v2, v3});
-	}
-
-	@Override
-	public Event start(String name, Object v1, Object v2, Object v3, Object v4) {
-		return createEndEvent(name, new Object[] {v1, v2, v3, v4});
-	}
-	
-	@Override
-	public Event start(String name, Object v1, Object v2, Object v3, Object v4, Object v5) {
-		return createEndEvent(name, new Object[] {v1, v2, v3, v4, v5});
+		return start(Level.INFO, name);
 	}
 	
 	@Override
 	public Event start(String name, Object... values) {
+		return start(Level.INFO, name, values);
+	}
+	
+	@Override
+	public Event start(Level level, String name) {
+		if (! expectedLevel.enables(level)) { return  NoopTrace.EVENT; }
+		return createEndEvent(name, EMPTY);
+	}
+	
+	@Override
+	public Event start(Level level, String name, Object... values) {
+		if (! expectedLevel.enables(level)) { return  NoopTrace.EVENT; }
 		return createEndEvent(name, values);
 	}
 
@@ -68,36 +58,23 @@ public class VizuTrace implements Trace {
 
 		@Override
 	public void event(String name) {
-		simple(name, EMPTY);
-	}
-
-	@Override
-	public void event(String name, Object v1) {
-		simple(name, new Object[] {v1});
-	}
-
-	@Override
-	public void event(String name, Object v1, Object v2) {
-		simple(name, new Object[] {v1, v2});
-	}
-
-	@Override
-	public void event(String name, Object v1, Object v2, Object v3) {
-		simple(name, new Object[] {v1, v2, v3});
-	}
-
-	@Override
-	public void event(String name, Object v1, Object v2, Object v3, Object v4) {
-		simple(name, new Object[] {v1, v2, v3, v4});
-	}
-
-	@Override
-	public void event(String name, Object v1, Object v2, Object v3, Object v4, Object v5) {
-		simple(name, new Object[] {v1, v2, v3, v4, v5});
+		event(Level.INFO, name);
 	}
 
 	@Override
 	public void event(String name, Object... values) {
+		event(Level.INFO, name, values);
+	}
+	
+		@Override
+	public void event(Level level, String name) {
+		if (! expectedLevel.enables(level)) { return; }
+		simple(name, EMPTY);
+	}
+
+	@Override
+	public void event(Level level, String name, Object... values) {
+		if (! expectedLevel.enables(level)) { return; }
 		simple(name, values);
 	}
 
@@ -107,18 +84,27 @@ public class VizuTrace implements Trace {
 		return event;
 	}
 
-	@Override
-	public String toString() {
-		try {
-			StringWriter sw = new StringWriter();
-			write(sw);
-			return sw.toString();
-		} catch(Exception ex) {
-			return ex.getMessage();
-		}
-	}
-
 	public void write(Writer writer) throws IOException {
 		VizuFormatter.format(trace, writer);
+	}
+
+	@Override
+	public boolean isDebugEnabled() {
+		return expectedLevel.enables(Level.DEBUG);
+	}
+
+	@Override
+	public boolean isInfoEnabled() {
+		return expectedLevel.enables(Level.INFO);
+	}
+
+	@Override
+	public boolean isWarnEnabled() {
+		return expectedLevel.enables(Level.WARN);
+	}
+
+	@Override
+	public boolean isErrorEnabled() {
+		return expectedLevel.enables(Level.ERROR);
 	}
 }
