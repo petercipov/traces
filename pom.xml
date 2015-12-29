@@ -106,7 +106,7 @@
 						<version>1.6.3</version>
 						<extensions>true</extensions>
 						<configuration>
-							<serverId>osonatype-oss-release</serverId>
+							<serverId>sonatype-oss-release</serverId>
 							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
 							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 						</configuration>
