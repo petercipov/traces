@@ -73,11 +73,11 @@ class SimpleEvent extends SerializedEvent {
 	
 	private static void writeStacktrace(JsonGenerator jg, Throwable throwable) throws IOException {
 		jg.writeStartObject();
-			writeThrrowable(jg, throwable, 10);
+			writeThrowable(jg, throwable, 10);
 		jg.writeEndObject();
 	}
 	
-	private static void writeThrrowable(JsonGenerator jg, Throwable th, int nesting) throws IOException {
+	private static void writeThrowable(JsonGenerator jg, Throwable th, int nesting) throws IOException {
 
 		jg.writeStringField("errorMessage", th.toString());
 		jg.writeArrayFieldStart("stack");
@@ -93,7 +93,7 @@ class SimpleEvent extends SerializedEvent {
 		if (cause == null || nesting <= 0) {return;}
 		
 		jg.writeObjectFieldStart("causedBy");
-		writeThrrowable(jg, cause, nesting - 1);
+		writeThrowable(jg, cause, nesting - 1);
 		jg.writeEndObject();
 	}
 	
