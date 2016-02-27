@@ -1,17 +1,25 @@
 package com.petercipov.traces.vizu;
 
+import com.petercipov.traces.api.FinishableTrace;
 import com.petercipov.traces.api.Level;
 import com.petercipov.traces.api.NoopTrace;
 import com.petercipov.traces.api.Trace;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 /**
  *
  * @author pcipov
  */
-public class VizuTrace implements Trace {
+public class VizuTrace implements FinishableTrace {
+	private static final Logger LOGGER = LoggerFactory.getLogger(VizuTrace.class);
+	private static final Marker MARKER = MarkerFactory.getMarker("Trace");
 	
 	private static final Object[] EMPTY = new Object[0];
 	private final ConcurrentLinkedQueue<SerializedEvent> trace;
@@ -106,5 +114,20 @@ public class VizuTrace implements Trace {
 	@Override
 	public boolean isErrorEnabled() {
 		return expectedLevel.enables(Level.ERROR);
+	}
+
+	@Override
+	public void finish() {
+		if (LOGGER.isInfoEnabled(MARKER)) {
+			event("Trace finished");
+			StringWriter sw = new StringWriter();
+			try {
+				this.write(sw);
+			} catch(Exception ex) {
+				throw new IllegalStateException("Failed to finish trace", ex);
+			}
+
+			LOGGER.info(MARKER, sw.toString());
+		}
 	}
 }

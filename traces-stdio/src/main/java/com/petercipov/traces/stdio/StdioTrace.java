@@ -1,5 +1,8 @@
-package com.petercipov.traces.api;
+package com.petercipov.traces.stdio;
 
+import com.petercipov.traces.api.FinishableTrace;
+import com.petercipov.traces.api.Level;
+import com.petercipov.traces.api.NoopTrace;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -8,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author pcipov
  */
-public class StdioTrace implements Trace {
+public class StdioTrace implements FinishableTrace {
 	
 	private static final AtomicLong LOCAL_COUNTER = new AtomicLong();
 	private final AtomicInteger counter = new AtomicInteger();
@@ -108,4 +111,9 @@ public class StdioTrace implements Trace {
 	public boolean isErrorEnabled() {
 		return expectedLevel.enables(Level.DEBUG);
 	}	
+
+	@Override
+	public void finish() {
+		printEvent("Trace has finished", "");
+	}
 }

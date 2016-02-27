@@ -5,7 +5,7 @@ package com.petercipov.traces.api;
  *
  * @author pcipov
  */
-public final class NoopTrace implements Trace {
+public final class NoopTrace implements FinishableTrace {
 	
 	public static final NoopTrace INSTANCE = new NoopTrace();
 
@@ -76,6 +76,11 @@ public final class NoopTrace implements Trace {
 
 	@Override
 	public void event(Level level, String name, Object... values) {
+		//NOOP
+	}
+
+	@Override
+	public void finish() {
 		//NOOP
 	}
 }

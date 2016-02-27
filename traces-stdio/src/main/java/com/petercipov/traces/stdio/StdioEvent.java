@@ -1,5 +1,6 @@
-package com.petercipov.traces.api;
+package com.petercipov.traces.stdio;
 
+import com.petercipov.traces.api.Trace;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
