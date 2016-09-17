@@ -1,8 +1,8 @@
 package com.petercipov.traces.junit;
 
 import com.petercipov.traces.api.FinishableTrace;
-import com.petercipov.traces.api.Level;
 import com.petercipov.traces.api.NoopTraceFactory;
+import com.petercipov.traces.api.TraceConfiguration;
 import com.petercipov.traces.api.TraceFactory;
 import java.net.URL;
 import java.util.Enumeration;
@@ -17,19 +17,19 @@ public class ReflexTraceImplFactory implements TraceImplFactory {
 
 	private final String loaderPath;
 	private final String className;
-	private final Level expectedLevel;
 	private final TraceFactory traceFactory;
+	private final TraceConfiguration configuration;
 
-	public ReflexTraceImplFactory(String className, Level expectedLevel) {
+	public ReflexTraceImplFactory(String className, TraceConfiguration configuration) {
 		this.loaderPath = className.replace('.', '/')+".class";
 		this.className = className;
-		this.expectedLevel = expectedLevel;
+		this.configuration = configuration;
 		this.traceFactory = load();
 	}
 
 	@Override
 	public FinishableTrace create() {
-		return this.traceFactory.create(expectedLevel);
+		return this.traceFactory.create(configuration);
 	}
 	
 	private TraceFactory load() {

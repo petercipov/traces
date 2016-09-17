@@ -1,11 +1,8 @@
 package com.petercipov.traces.stdio;
 
-import com.petercipov.traces.api.FinishableTrace;
-import com.petercipov.traces.api.Level;
-import com.petercipov.traces.api.NoopTrace;
-import java.util.Arrays;
+import com.petercipov.traces.api.*;
+
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  *
@@ -13,107 +10,143 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class StdioTrace implements FinishableTrace {
 	
-	private static final AtomicLong LOCAL_COUNTER = new AtomicLong();
-	private final AtomicInteger counter = new AtomicInteger();
-	private final Level expectedLevel;
-	private final long localGuid = LOCAL_COUNTER.incrementAndGet();
+	private static final Object[] EMPTY = new Object[0];
+	private static final Event EVENT = new Event() {
 
-	public StdioTrace(Level expectedLevel) {
-		this.expectedLevel = expectedLevel;
-	}
-	
 		@Override
-	public Event start(String name) {
-		return start(Level.INFO, name);
+		public void end() {
+			//NOOP
+		}
+	};
+	private static final NoopTraceFactory NOOP_TRACE_FACTORY = new NoopTraceFactory();
+	
+	private final AtomicInteger counter;
+	private final Printer printer;
+	private final String uuid;
+	private final TraceConfiguration configuration;
+
+	public StdioTrace(TraceConfiguration configuration) {
+		this.counter = new AtomicInteger();
+		this.uuid = configuration.generateUUID();
+		this.printer = new Printer(this.uuid);
+		this.configuration = configuration;
 	}
 
 	@Override
-	public Event start(String name, Object... values) {
-		return start(Level.INFO, name, values);
+	public String getUUID() {
+		return uuid;
 	}
 
 	@Override
-	public Event start(Level level, String name) {
-		if (! expectedLevel.enables(level)) { return NoopTrace.EVENT; }
+	public Event start(String message) {
+		return start(configuration.getDefaultMarker(), message);
+	}
+
+	@Override
+	public Event start(String message, Object... values) {
+		return start(configuration.getDefaultMarker(), message, values);
+	}
+
+	@Override
+	public Event start(Object marker, String message) {
+		if (! configuration.isEnabled(marker)) { return EVENT; }
 		
 		int id = counter.incrementAndGet();
-		printStart(id, name, "");
-		return new StdioEvent(localGuid, id, counter);
+		printer.printlnEventStart(id, message, EMPTY);
+		return new StdioEvent(printer, id, counter);
 	}
 
 	@Override
-	public Event start(Level level, String name, Object... values) {
-		if (! expectedLevel.enables(level)) { return NoopTrace.EVENT; }
+	public Event start(Object marker, String message, Object... values) {
+		if (! configuration.isEnabled(marker)) { return EVENT; }
 		
 		int id = counter.incrementAndGet();
-		printStart(id, name, Arrays.toString(values));
-		return new StdioEvent(localGuid, id, counter);
-	}
-
-	private void printStart(int id, String name, String valuesString) {
-		System.out.format("guid:%d | id:%d | thread:%s | t:%d | \t type:start | n:%s | values:%s \n",
-			localGuid,
-			id,
-			Thread.currentThread().getName(),
-			System.currentTimeMillis(),
-			name,
-			valuesString);
+		printer.printlnEventStart(id, message, values);
+		return new StdioEvent(printer, id, counter);
 	}
 
 	@Override
-	public void event(Level level, String name) {
-		if (! expectedLevel.enables(level)) { return; }
-		printEvent(name, "");
+	public void event(Object marker, String message) {
+		if (! configuration.isEnabled(marker)) { return; }
+		printer.printlnSimpleEvent(counter.incrementAndGet(), message, EMPTY);
 	}
 
 	@Override
-	public void event(Level level, String name, Object... values) {
-		if (! expectedLevel.enables(level)) { return; }
-		printEvent(name, Arrays.toString(values));
-	}
-
-	private void printEvent(String name, String values) {
-		System.out.format("guid:%d | id:%d | thread:%s | t:%d | \t n:%s | values:%s \n",
-			localGuid,
-			counter.incrementAndGet(),
-			Thread.currentThread().getName(),
-			System.currentTimeMillis(),
-			name,
-			values);
+	public void event(Object marker, String message, Object ... values) {
+		if (! configuration.isEnabled(marker)) { return; }
+		printer.printlnSimpleEvent(counter.incrementAndGet(), message, values);
 	}
 	
 	@Override
-	public void event(String name) {
-		event(Level.INFO, name);
+	public void event(String message) {
+		event(configuration.getDefaultMarker(), message);
 	}
 
 	@Override
-	public void event(String name, Object... values) {
-		event(Level.INFO, name, values);
+	public void event(String message, Object... values) {
+		event(configuration.getDefaultMarker(), message, values);
 	}
 
 	@Override
-	public boolean isDebugEnabled() {
-		return expectedLevel.enables(Level.DEBUG);
+	public boolean isEnabled(Object marker) {
+		return this.configuration.isEnabled(marker);
 	}
-
-	@Override
-	public boolean isInfoEnabled() {
-		return expectedLevel.enables(Level.DEBUG);
-	}
-
-	@Override
-	public boolean isWarnEnabled() {
-		return expectedLevel.enables(Level.DEBUG);
-	}
-
-	@Override
-	public boolean isErrorEnabled() {
-		return expectedLevel.enables(Level.DEBUG);
-	}	
 
 	@Override
 	public void finish() {
-		printEvent("Trace has finished", "");
+		printer.printTraceEnd(counter.incrementAndGet());
+	}
+
+	@Override
+	public Trace fork(String message) {
+		return fork(configuration.getDefaultMarker(), message, EMPTY);
+	}
+
+	@Override
+	public Trace fork(String message, Object... values) {
+		return fork(configuration.getDefaultMarker(), message, values);
+	}
+
+	@Override
+	public Trace fork(Object marker, String message) {
+		return fork(marker, message, EMPTY);
+	}
+
+	@Override
+	public Trace fork(Object marker, String message, Object... values) {
+		if (configuration.isEnabled(marker)) {
+			StdioTrace trace =  new StdioTrace(this.configuration);
+			trace.event(marker, "Trace was forked (parent trace uuid)", uuid);
+			this.event(marker, "Trace was forked (child trace uuid)", trace.uuid);
+			this.event(marker, message, values == null ? EMPTY : values);
+			return trace;
+		} else {
+			return NOOP_TRACE_FACTORY.create(this.configuration);
+		}
+	}
+
+	@Override
+	public void join(Trace trace, String message) {
+		join(trace, configuration.getDefaultMarker(), message, EMPTY);
+	}
+
+	@Override
+	public void join(Trace trace, String message, Object... values) {
+		join(trace, configuration.getDefaultMarker(), message, values);
+	}
+
+	@Override
+	public void join(Trace trace, Object marker, String message) {
+		join(trace, marker, message, EMPTY);
+	}
+
+	@Override
+	public void join(Trace trace, Object marker, String message, Object... values) {
+		if (configuration.isEnabled(marker)) {
+			this.event("Trace joined (joining trace uuid)", trace.getUUID());
+			this.event(marker, message, values == null ? EMPTY : values);
+		}
+
+		trace.event("Trace joined (joined trace uuid)", getUUID());
 	}
 }

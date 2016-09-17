@@ -7,25 +7,20 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author pcipov
  */
-class StdioEvent implements Trace.Event{
-	private final long guid;
+class StdioEvent implements Trace.Event {
+	
+	private final Printer printer;
 	private final int refId;
 	private final AtomicInteger counter;
 	
-	public StdioEvent(long guid, int refId, AtomicInteger counter) {		
-		this.guid = guid;
+	public StdioEvent(Printer printer, int refId, AtomicInteger counter) {		
+		this.printer = printer;
 		this.refId = refId;
 		this.counter = counter;
 	}
 
 	@Override
 	public void end() {
-		System.out.format("guid:%d | id:%d | thread:%s | t:%d | \t type:end | of:%d \n",
-			guid,
-			counter.incrementAndGet(), 
-			Thread.currentThread().getName(), 
-			System.currentTimeMillis(), 
-			refId
-		);
+		printer.printlnEventEnd(counter.incrementAndGet(), refId);
 	}
 }

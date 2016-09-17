@@ -6,10 +6,10 @@ package com.petercipov.traces.api;
  * @author pcipov
  */
 public final class NoopTrace implements FinishableTrace {
-	
-	public static final NoopTrace INSTANCE = new NoopTrace();
 
-	public static final Event EVENT = new Event() {
+	private static final String UUID = "NOOP-"+System.currentTimeMillis();
+	
+	private static final Event EVENT = new Event() {
 
 		@Override
 		public void end() {
@@ -17,70 +17,101 @@ public final class NoopTrace implements FinishableTrace {
 		}
 	};
 
-	private NoopTrace() {}
-	
+	NoopTrace() {
+		// SHOULD NOT BE CALLED DIRECTLY, USE FACTORY
+	}
+
 	@Override
-	public Event start(String name, Object... values) {
+	public boolean isEnabled(Object marker) {
+		return false;
+	}
+
+	@Override
+	public Event start(String message, Object... values) {
 		return EVENT;
 	}
 
 	@Override
-	public void event(String name, Object... values) {
+	public void event(String message, Object... values) {
 		//NOOP
 	}
 
 	@Override
-	public Event start(String name) {
+	public String getUUID() {
+		return UUID;
+	}
+	@Override
+	public Event start(String message) {
 		return EVENT;
 	}
 
 	@Override
-	public void event(String name) {
+	public void event(String message) {
 		//NOOP
 	}
 
 	@Override
-	public boolean isDebugEnabled() {
-		return false;
-	}
-
-	@Override
-	public boolean isInfoEnabled() {
-		return false;
-	}
-
-	@Override
-	public boolean isWarnEnabled() {
-		return false;
-	}
-
-	@Override
-	public boolean isErrorEnabled() {
-		return false;
-	}
-
-	@Override
-	public Event start(Level level, String name) {
+	public Event start(Object marker, String message) {
 		return EVENT;
 	}
 	
 	@Override
-	public Event start(Level level, String name, Object... values) {
+	public Event start(Object marker, String message, Object... values) {
 		return EVENT;
 	}
 
 	@Override
-	public void event(Level level, String name) {
+	public void event(Object marker, String message) {
 		//NOOP
 	}
 
 	@Override
-	public void event(Level level, String name, Object... values) {
+	public void event(Object marker, String message, Object... values) {
 		//NOOP
 	}
 
 	@Override
 	public void finish() {
+		//NOOP
+	}
+
+	@Override
+	public Trace fork(String message) {
+		return this;
+	}
+
+	@Override
+	public Trace fork(String message, Object... values) {
+		return this;
+	}
+
+	@Override
+	public Trace fork(Object marker, String message) {
+		return this;
+	}
+
+	@Override
+	public Trace fork(Object marker, String message, Object... values) {
+		return this;
+	}
+
+	@Override
+	public void join(Trace trace, String message) {
+		//NOOP
+	}
+
+	@Override
+	public void join(Trace trace, String message, Object... values) {
+		//NOOP
+	}
+
+	@Override
+	public void join(Trace trace, Object marker, String message) {
+		//NOOP
+	}
+
+	@Override
+	public void join(Trace trace, Object marker, String message, Object... values) {
 		//NOOP
 	}
 }

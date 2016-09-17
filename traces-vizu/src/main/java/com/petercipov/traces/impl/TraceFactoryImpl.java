@@ -1,7 +1,7 @@
 package com.petercipov.traces.impl;
 
 import com.petercipov.traces.api.FinishableTrace;
-import com.petercipov.traces.api.Level;
+import com.petercipov.traces.api.TraceConfiguration;
 import com.petercipov.traces.api.TraceFactory;
 import com.petercipov.traces.vizu.VizuTrace;
 
@@ -12,8 +12,8 @@ import com.petercipov.traces.vizu.VizuTrace;
 public class TraceFactoryImpl implements TraceFactory{
 
 	@Override
-	public FinishableTrace create(Level expectedLevel) {
-		return new VizuTrace(expectedLevel);
+	public FinishableTrace create(TraceConfiguration configuration) {
+		return new VizuTrace(configuration);
 	}
 	
 }

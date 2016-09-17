@@ -1,9 +1,11 @@
 package com.petercipov.traces.junit;
 
 import com.petercipov.traces.api.FinishableTrace;
-import com.petercipov.traces.api.Level;
 import com.petercipov.traces.api.Trace;
 import java.util.LinkedList;
+import java.util.UUID;
+
+import com.petercipov.traces.api.TraceConfiguration;
 import org.junit.rules.ExternalResource;
 
 /**
@@ -12,12 +14,28 @@ import org.junit.rules.ExternalResource;
  */
 public class TraceRule extends ExternalResource {
 	private static final String FACTORY_CLASS = "com.petercipov.traces.impl.TraceFactoryImpl";
+	private static final Object DEFAULT_MARKER = new Object();
 
 	private final LinkedList<FinishableTrace> traces;
 	private final TraceImplFactory factory;
 
 	public TraceRule() {
-		this(new ReflexTraceImplFactory(FACTORY_CLASS, Level.INFO));
+		this(new ReflexTraceImplFactory(FACTORY_CLASS, new TraceConfiguration() {
+			@Override
+			public boolean isEnabled(Object marker) {
+				return true;
+			}
+
+			@Override
+			public String generateUUID() {
+				return UUID.randomUUID().toString().substring(0, 23);
+			}
+
+			@Override
+			public Object getDefaultMarker() {
+				return DEFAULT_MARKER;
+			}
+		}));
 	}
 
 	public TraceRule(TraceImplFactory factory) {

@@ -31,7 +31,7 @@ final class VizuFormatter {
 		//Singleton
 	}
 	
-	public static void format(Collection<SerializedEvent> events, Writer w) throws IOException {
+	public static void format(String uuid, Collection<SerializedEvent> events, Writer w) throws IOException {
 		JsonGenerator jg = factory.createGenerator(w).configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
 		
 		assignIds(events);
@@ -43,6 +43,7 @@ final class VizuFormatter {
 			: events.iterator().next().getTime();
 		
 		jg.writeStartObject();
+		jg.writeStringField("uuid", uuid);
 		jg.writeStringField("time", serializeTime(new Date(startTime)));
 		jg.writeArrayFieldStart("trace");
 		
