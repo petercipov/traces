@@ -1,13 +1,11 @@
 package com.petercipov.traces.logbackslf4j1;
 
+import com.petercipov.traces.api.TracedAware;
 import org.slf4j.Marker;
 
 import java.util.Iterator;
 
 public abstract class TraceAwareMarker implements Marker, TracedAware {
-
-    @Override
-    public abstract Traced get();
 
     @Override
     public String getName() {

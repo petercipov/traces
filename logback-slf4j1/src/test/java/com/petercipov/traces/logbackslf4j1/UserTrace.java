@@ -1,5 +1,7 @@
 package com.petercipov.traces.logbackslf4j1;
 
+import com.petercipov.traces.api.Traced;
+
 import java.util.function.BiConsumer;
 
 public class UserTrace extends TraceAwareMarker implements Traced {
@@ -30,7 +32,7 @@ public class UserTrace extends TraceAwareMarker implements Traced {
     }
 
     @Override
-    public Traced get() {
+    public Traced getTraced() {
         return this;
     }
 }

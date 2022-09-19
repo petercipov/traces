@@ -1,4 +1,4 @@
-package com.petercipov.traces.logbackslf4j1;
+package com.petercipov.traces.api;
 
 import java.util.function.BiConsumer;
 
