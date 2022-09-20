@@ -44,6 +44,7 @@
 		<module>traces-slf4j-1</module>
 		<module>traces-slf4j-1-logback</module>
 		<module>traces-slf4j-1-logback-contrib-json</module>
+		<module>traces-slf4j-2</module>
 	</modules>
 	
 	<distributionManagement>
