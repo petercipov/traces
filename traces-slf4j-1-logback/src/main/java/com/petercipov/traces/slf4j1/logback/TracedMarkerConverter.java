@@ -1,8 +1,9 @@
-package com.petercipov.traces.logbackslf4j1;
+package com.petercipov.traces.slf4j1.logback;
 
 import ch.qos.logback.classic.pattern.ClassicConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.petercipov.traces.api.Traced;
+import com.petercipov.traces.slf4j1.TraceAwareMarker;
 import org.slf4j.Marker;
 
 import java.util.Iterator;

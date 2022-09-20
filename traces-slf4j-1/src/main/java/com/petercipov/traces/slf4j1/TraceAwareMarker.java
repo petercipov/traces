@@ -1,4 +1,4 @@
-package com.petercipov.traces.logbackslf4j1;
+package com.petercipov.traces.slf4j1;
 
 import com.petercipov.traces.api.TracedAware;
 import org.slf4j.Marker;

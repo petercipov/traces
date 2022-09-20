@@ -40,8 +40,10 @@
 	</scm>
 	
 	<modules>
-		<module>logback-slf4j1</module>
 		<module>traces-api</module>
+		<module>traces-slf4j-1</module>
+		<module>traces-slf4j-1-logback</module>
+		<module>traces-slf4j-1-logback-contrib-json</module>
 	</modules>
 	
 	<distributionManagement>
