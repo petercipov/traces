@@ -3,7 +3,7 @@ package com.petercipov.traces.slf4j1.logback;
 import ch.qos.logback.classic.pattern.ClassicConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.petercipov.traces.api.Traced;
-import com.petercipov.traces.slf4j1.TraceAwareMarker;
+import com.petercipov.traces.api.TracedAware;
 import org.slf4j.Marker;
 
 import java.util.Iterator;
@@ -17,8 +17,8 @@ public class TracedMarkerConverter extends ClassicConverter {
 
     protected String toString(final Marker marker) {
         if (marker != null) {
-            if (marker instanceof TraceAwareMarker) {
-                return toString(((TraceAwareMarker) marker).getTraced());
+            if (marker instanceof TracedAware) {
+                return toString(((TracedAware) marker).getTraced());
             } else {
                 for (Iterator<Marker> it = marker.iterator(); it.hasNext(); ) {
                     String value = toString(it.next());
