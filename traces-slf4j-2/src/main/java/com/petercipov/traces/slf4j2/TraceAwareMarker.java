@@ -9,7 +9,7 @@ public abstract class TraceAwareMarker implements Marker, TracedAware {
 
     @Override
     public String getName() {
-        return "TracedMarker";
+        return toString();
     }
 
     @Override
@@ -49,7 +49,20 @@ public abstract class TraceAwareMarker implements Marker, TracedAware {
 
     @Override
     public String toString() {
-        return getName();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append('[');
+        int sizeAfterPrefix = sb.length();
+        getTraced().apply((key, value) -> {
+            sb.append(key).append(":").append(value).append(", ");
+        });
+
+        if (sb.length() > sizeAfterPrefix) {
+            sb.setLength(sb.length() - 2);
+        }
+        sb.append("]");
+
+        return sb.toString();
     }
 }
 
