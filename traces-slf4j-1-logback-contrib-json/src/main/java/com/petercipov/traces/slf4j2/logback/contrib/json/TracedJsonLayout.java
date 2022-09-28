@@ -1,4 +1,4 @@
-package com.petercipov.traces.slf4j1.logback.contrib.json;
+package com.petercipov.traces.slf4j2.logback.contrib.json;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.contrib.json.classic.JsonLayout;

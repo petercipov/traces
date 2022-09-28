@@ -51,7 +51,6 @@ public abstract class TraceAwareMarker implements Marker, TracedAware {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append('[');
         int sizeAfterPrefix = sb.length();
         getTraced().apply((key, value) -> {
             sb.append(key).append(":").append(value).append(", ");
@@ -60,7 +59,6 @@ public abstract class TraceAwareMarker implements Marker, TracedAware {
         if (sb.length() > sizeAfterPrefix) {
             sb.setLength(sb.length() - 2);
         }
-        sb.append("]");
 
         return sb.toString();
     }
