@@ -1,4 +1,5 @@
 import com.petercipov.traces.slf4j2.testutils.ConsoleBuffer;
+import com.petercipov.traces.slf4j2.testutils.UserTrace;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;

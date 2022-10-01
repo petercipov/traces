@@ -53,7 +53,7 @@ public abstract class TraceAwareMarker implements Marker, TracedAware {
 
         int sizeAfterPrefix = sb.length();
         getTraced().apply((key, value) -> {
-            sb.append(key).append(":").append(value).append(", ");
+            sb.append(key).append(": ").append(value).append(", ");
         });
 
         if (sb.length() > sizeAfterPrefix) {

@@ -1,3 +1,5 @@
+package com.petercipov.traces.slf4j2.testutils;
+
 import com.petercipov.traces.api.Traced;
 import com.petercipov.traces.slf4j2.TraceAwareMarker;
 
