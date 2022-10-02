@@ -29,7 +29,7 @@ public abstract class TraceAwareMarker implements Marker, TracedAware {
 
     @Override
     public boolean hasReferences() {
-        return true;
+        return false;
     }
 
     @Override

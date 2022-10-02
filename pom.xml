@@ -46,6 +46,7 @@
         <module>traces-slf4j-2-logevents</module>
         <module>traces-slf4j-2-test-utils</module>
 		<module>traces-slf4j-2-logback-contrib-json</module>
+		<module>traces-slf4j-2-log4j</module>
 	</modules>
 	
 	<distributionManagement>
