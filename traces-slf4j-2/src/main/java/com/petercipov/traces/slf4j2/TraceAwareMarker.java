@@ -1,11 +1,19 @@
 package com.petercipov.traces.slf4j2;
 
+import com.petercipov.traces.api.Traced;
 import com.petercipov.traces.api.TracedAware;
 import org.slf4j.Marker;
 
 import java.util.Iterator;
 
-public abstract class TraceAwareMarker implements Marker, TracedAware {
+public class TraceAwareMarker implements Marker, TracedAware {
+
+    private final Traced traced;
+
+
+    public TraceAwareMarker(Traced traced) {
+        this.traced = traced;
+    }
 
     @Override
     public String getName() {
@@ -23,6 +31,7 @@ public abstract class TraceAwareMarker implements Marker, TracedAware {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean hasChildren() {
         return true;
     }
@@ -61,6 +70,11 @@ public abstract class TraceAwareMarker implements Marker, TracedAware {
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public Traced getTraced() {
+        return traced;
     }
 }
 

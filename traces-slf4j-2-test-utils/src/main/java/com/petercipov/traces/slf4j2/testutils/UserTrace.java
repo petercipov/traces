@@ -5,11 +5,14 @@ import com.petercipov.traces.slf4j2.TraceAwareMarker;
 
 import java.util.function.BiConsumer;
 
-public class UserTrace extends TraceAwareMarker implements Traced {
+public class UserTrace implements Traced {
 
     private String accountId;
     private String userId;
     private String invocationId;
+
+    private final TraceAwareMarker marker = new TraceAwareMarker(this);
+
 
     @Override
     public void apply(BiConsumer<String, Object> context) {
@@ -32,8 +35,7 @@ public class UserTrace extends TraceAwareMarker implements Traced {
         return trace;
     }
 
-    @Override
-    public Traced getTraced() {
-        return this;
+    public TraceAwareMarker marker() {
+        return marker;
     }
 }

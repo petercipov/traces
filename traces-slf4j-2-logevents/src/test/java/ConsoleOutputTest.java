@@ -28,7 +28,7 @@ public class ConsoleOutputTest {
         UserTrace trace = UserTrace.of("Ib30afb52-64c1-4304-8cf4-f31af3f627dc")
                         .withContextOf("A1177c091-843c-4fbf-a4bd-a59e40d80eca", "Uc0b6ae13-5c8d-4cb0-b95b-c9a3c2f1e54f");
 
-        LOGGER.info(trace, "ABCD");
+        LOGGER.info(trace.marker(), "ABCD");
 
         Assertions.assertEquals("[accountId:A1177c091-843c-4fbf-a4bd-a59e40d80eca, userId:Uc0b6ae13-5c8d-4cb0-b95b-c9a3c2f1e54f, invocationId:Ib30afb52-64c1-4304-8cf4-f31af3f627dc] ABCD", buffer.getConsoleOutput().trim());
     }

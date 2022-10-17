@@ -47,7 +47,7 @@ public class MarkerTest {
                 .of("I0f6bf39e-639c-4a53-a818-7ff9fb8482af")
                 .withContextOf("Ac32463a2-3466-463a-b02c-bb5fe1561b80", "U30361475-6ea0-4904-a767-fa0c54e486bb");
 
-        LOGGER.info(trace, "XYZ");
+        LOGGER.info(trace.marker(), "XYZ");
 
         Assertions.assertEquals("[accountId: Ac32463a2-3466-463a-b02c-bb5fe1561b80, " +
                 "userId: U30361475-6ea0-4904-a767-fa0c54e486bb, " +
