@@ -27,6 +27,12 @@
             <groupId>org.logevents</groupId>
             <artifactId>logevents</artifactId>
             <version>0.4.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
